@@ -1,0 +1,100 @@
+# -*- coding: utf-8 -*
+
+#!/usr/bin/env python
+# license removed for brevity
+import rospy
+from std_msgs.msg import String
+import cv2
+import socket
+import time
+import sys
+from PIL import Image
+
+local_address = ('', 9000)
+# Create a UDP connection that we'll send the command to
+#socket.socket(參數1,參數2)   通訊格式            廣播
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+#sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+# Bind to the local address and port
+sock.bind(local_address)
+
+# IP and port of Tello
+tello_address = ('192.168.10.1', 8889)
+
+def talker():
+    pub1 = rospy.Publisher('a1', String, queue_size=1)
+    pub2 = rospy.Publisher('a2', String, queue_size=1)
+    pub3 = rospy.Publisher('a3', String, queue_size=1)
+    rospy.init_node('talker', anonymous=True)
+    rate = rospy.Rate(0.25) # 10hz
+    while not rospy.is_shutdown():
+        print('--------------------------')
+        try:
+            msg = 'command'.encode(encoding="utf-8")
+            sent = sock.sendto(msg, tello_address)
+            time.sleep(1)
+            response0, ip_address = sock.recvfrom(128)
+            
+        except:
+            pass
+        
+        #主要是response0 使不會錯亂 另外 128 129 130可用
+
+        '''
+        msg = 'battery?'.encode(encoding="utf-8")
+        sent = sock.sendto(msg, tello_address)  
+        response, ip_address = sock.recvfrom(128)
+        '''
+        try:
+            msg = 'battery?'.encode(encoding="utf-8")
+            sent = sock.sendto(msg, tello_address) 
+            time.sleep(1)  
+            response1, ip_address = sock.recvfrom(128)
+
+            hello_str1 = "a1: %s" % response1
+            rospy.loginfo(hello_str1)
+            pub1.publish(hello_str1)            
+        except:
+            pass
+ 
+        
+        try:
+            msg = 'time?'.encode(encoding="utf-8")
+            sent = sock.sendto(msg, tello_address)  
+            time.sleep(1) 
+            response2, ip_address = sock.recvfrom(128)
+              
+
+            hello_str2 = "a2: %s" % response2
+            rospy.loginfo(hello_str2)
+            pub2.publish(hello_str2)            
+        except:
+            pass
+
+
+        try:
+            msg = 'height?'.encode(encoding="utf-8")
+            sent = sock.sendto(msg, tello_address)  
+            time.sleep(1) 
+            response3, ip_address = sock.recvfrom(128)
+            time.sleep(1) 
+
+            hello_str3 = "a3: %s" % response3 
+            rospy.loginfo(hello_str3)
+            pub3.publish(hello_str3)  
+        
+        except:
+            pass
+
+      
+        
+        rate.sleep()
+
+if __name__ == '__main__':
+    try:
+        talker()
+    except rospy.ROSInterruptException:
+        pass
