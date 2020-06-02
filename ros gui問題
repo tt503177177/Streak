@@ -1,0 +1,151 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'gui.ui'
+#
+# Created by: PyQt5 UI code generator 5.5.1
+#
+# WARNING! All changes made in this file will be lost!
+
+import sys, cv2
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+import socket
+import time
+from PIL import Image
+from PyQt5 import QtCore, QtGui, QtWidgets
+import rospy
+from std_msgs.msg import String
+import gc
+xx = str('%')
+
+def callback1(a1):
+    rospy.loginfo("I heard battery: %s", a1.data)
+    a1 = a1.data
+    window.battery_textBrowser.setText('小無人機電量： %s%s' %(a1, xx))
+'''
+def callback2(a2):
+    rospy.loginfo("I heard time: %s", a2.data)
+
+def callback3(a3):
+    rospy.loginfo("I heard:height %s", a3.data)
+'''  
+    
+def listener():
+
+    # In ROS, nodes are uniquely named. If two nodes with the same
+    # name are launched, the previous one is kicked off. The
+    # anonymous=True flag means that rospy will choose a unique
+    # name for our 'listener' node so that multiple listeners can
+    # run simultaneously.
+    rospy.init_node('listener', anonymous=True)
+
+    rospy.Subscriber("a1", String, callback1)
+    time.sleep(0.5)
+    '''
+    rospy.Subscriber("a2", String, callback2)
+    time.sleep(0.5)
+    rospy.Subscriber("a3", String, callback3)
+
+    # spin() simply keeps python from exiting until this node is stopped
+    '''
+
+    rospy.spin()
+
+class Ui_gui(QMainWindow):  #要用引用分開的話 class Ui_gui(object):
+    def __init__(self):
+        super(Ui_gui,self).__init__()
+        self.setupUi(self)
+        self.setupUi(self)
+        self.listener()
+    def setupUi(self, gui):
+        gui.setObjectName("gui")
+        gui.resize(1600, 1024)
+        self.vF = QLabel()
+        self.setCentralWidget(self.vF)
+        self.pushButton_camera = QPushButton(self)
+        self.pushButton_camera.setGeometry(QtCore.QRect(30, 60, 200, 70))
+        self.pushButton_camera.setObjectName("pushButton_camera")
+        self.pushButton_camera.setText("開啟相機")
+
+        
+        self.battery_textBrowser1 = QTextBrowser(self)
+        self.battery_textBrowser1.setGeometry(QtCore.QRect(30, 290, 200, 40))
+        self.battery_textBrowser1.setObjectName("battery_textBrowser1")
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.battery_textBrowser1.setFont(font)
+        self.battery_textBrowser1.setText('大無人機電量： 0%s' %xx)  #battery
+        self.battery_textBrowser1.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.battery_textBrowser1.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+
+        self.battery_textBrowser = QTextBrowser(self)
+        self.battery_textBrowser.setGeometry(QtCore.QRect(30, 210, 220, 40))
+        self.battery_textBrowser.setObjectName("battery_textBrowser")
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.battery_textBrowser.setFont(font)
+        self.battery_textBrowser.setText('小無人機電量： 0%s' %xx)  #battery
+        self.battery_textBrowser.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.battery_textBrowser.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+
+
+        self.battery_textBrowser2 = QTextBrowser(self)
+        self.battery_textBrowser2.setGeometry(QtCore.QRect(30, 370, 200, 40))
+        self.battery_textBrowser2.setObjectName("battery_textBrowser2")
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.battery_textBrowser2.setFont(font)
+        self.battery_textBrowser2.setText('小無人機座標：(0,0)' )  #battery
+        self.battery_textBrowser2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.battery_textBrowser2.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        
+
+        self.battery_textBrowser3 = QTextBrowser(self)
+        self.battery_textBrowser3.setGeometry(QtCore.QRect(30, 450, 200, 40))
+        self.battery_textBrowser3.setObjectName("battery_textBrowser3r")
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.battery_textBrowser3.setFont(font)
+        self.battery_textBrowser3.setText('大無人機座標：(0,0)' )  #battery
+        self.battery_textBrowser3.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.battery_textBrowser3.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+
+    def callback1(self,a1):
+        self.rospy.loginfo("I heard battery: %s", a1.data)
+        self.a1 = a1.data
+        self.window.battery_textBrowser.setText('小無人機電量： %s%s' %(a1, xx))
+    '''
+    def callback2(a2):
+        rospy.loginfo("I heard time: %s", a2.data)
+
+    def callback3(a3):
+        rospy.loginfo("I heard:height %s", a3.data)
+    '''  
+    
+    def listener(self):
+
+        # In ROS, nodes are uniquely named. If two nodes with the same
+        # name are launched, the previous one is kicked off. The
+        # anonymous=True flag means that rospy will choose a unique
+        # name for our 'listener' node so that multiple listeners can
+        # run simultaneously.
+        self.rospy.init_node('listener', anonymous=True)
+
+        self.rospy.Subscriber("a1", String, callback1)
+        self.time.sleep(0.5)
+        '''
+        rospy.Subscriber("a2", String, callback2)
+        time.sleep(0.5)
+        rospy.Subscriber("a3", String, callback3)
+
+        # spin() simply keeps python from exiting until this node is stopped
+        '''
+
+        self.rospy.spin()
+        
+
+app = QApplication(sys.argv)
+window = Ui_gui()
+window.show()
+sys.exit(app.exec_())
